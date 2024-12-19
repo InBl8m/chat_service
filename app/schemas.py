@@ -20,7 +20,3 @@ class ChatCreateRequest(BaseModel):
     user_1: str
     user_2: str
     user_1_secret: str
-
-
-class AcceptInvitationRequest(BaseModel):
-    user_2_secret: str

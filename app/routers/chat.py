@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Chat
-from app.schemas import ChatCreateRequest, AcceptInvitationRequest
+from app.schemas import ChatCreateRequest
 
 router = APIRouter()
 
@@ -35,7 +35,7 @@ def get_pending_invitations(user_2: str, db: Session = Depends(get_db)):
 
 
 @router.post("/accept_invitation/{chat_id}")
-def accept_invitation(chat_id: int, request: AcceptInvitationRequest, db: Session = Depends(get_db)):
+def accept_invitation(chat_id: int, db: Session = Depends(get_db)):
     # Найти чат по ID
     chat = db.query(Chat).filter(Chat.id == chat_id).first()
 
@@ -47,8 +47,6 @@ def accept_invitation(chat_id: int, request: AcceptInvitationRequest, db: Sessio
     if chat.active:
         raise HTTPException(status_code=400, detail="Chat is already active.")
 
-    # Установить секрет второго пользователя и активировать чат
-    chat.user_2_secret = request.user_2_secret
     chat.active = True
 
     # Сохранить изменения
@@ -56,27 +54,3 @@ def accept_invitation(chat_id: int, request: AcceptInvitationRequest, db: Sessio
     db.refresh(chat)
 
     return {"message": "Invitation accepted.", "chat": chat}
-
-
-@router.get("/last_active_chat")
-def get_last_active_chat(user_1: str, user_2: str, db: Session = Depends(get_db)):
-    """
-    Поиск последнего согласованного (active = True) чата между двумя пользователями.
-    """
-    chat = (
-        db.query(Chat)
-        .filter(
-            ((Chat.user_1 == user_1) & (Chat.user_2 == user_2)) |
-            ((Chat.user_1 == user_2) & (Chat.user_2 == user_1))
-        )
-        .filter(Chat.active == True)
-        .order_by(Chat.id.desc())  # Сортируем по убыванию ID (последний созданный чат)
-        .first()  # Берем первый результат
-    )
-
-    # Если чат не найден
-    if not chat:
-        raise HTTPException(status_code=404, detail="No active chat found between the users.")
-
-    return chat
-
