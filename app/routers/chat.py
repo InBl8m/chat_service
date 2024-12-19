@@ -13,7 +13,7 @@ def create_chat(chat_data: ChatCreateRequest, db: Session = Depends(get_db)):
     chat = Chat(
         user_1=chat_data.user_1,
         user_2=chat_data.user_2,
-        user_1_secret=chat_data.user_1_secret,
+        offer=chat_data.offer,
     )
 
     db.add(chat)

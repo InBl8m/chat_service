@@ -8,6 +8,5 @@ class Chat(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_1 = Column(String, index=True)
     user_2 = Column(String, index=True)
-    user_1_secret = Column(String, nullable=True)
-    user_2_secret = Column(String, nullable=True)
+    offer = Column(String, nullable=True)
     active = Column(Boolean, default=False)

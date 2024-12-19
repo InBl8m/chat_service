@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
+
 # Загружаем переменные окружения из .env
 load_dotenv()
 
@@ -26,6 +27,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Создаем базовый класс для всех моделей
 Base = declarative_base()
 
+
 # Функция для получения сессии
 def get_db():
     db = SessionLocal()
@@ -33,6 +35,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 # Функция для создания таблиц
 def create_tables():

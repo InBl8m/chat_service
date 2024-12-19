@@ -19,4 +19,4 @@ class ChatResponse(BaseModel):
 class ChatCreateRequest(BaseModel):
     user_1: str
     user_2: str
-    user_1_secret: str
+    offer: str
